@@ -99,12 +99,15 @@ export default Vue.component('main-app', {
     onDeviceListReceived: function(deviceList) {
       this.deviceList = deviceList;
 
-        const socket = io();
-        socket.on('message', (message) => {
+      const socket = io();
+      socket.on('message', (message) => {
         const deviceId = message.annotations['iothub-connection-device-id']; 
+
         message.body.deviceId = deviceId;
         message.body.enqueuedTime = message.annotations['iothub-enqueuedtime'];
+
         if (this.messages.length > 500) this.messages.shift();
+
         this.messages.push(message.body);
       });
     }

@@ -11,10 +11,12 @@ var http = require('http');
 var socket = require('socket.io');
 var helpers = require('./lib/helpers');
 var liveHub = require('./lib/liveHub');
-var simSub = require('./lib/simHub');
+var simHub = require('./lib/simHub');
+var rmqHub = require('./lib/rmqHub');
 var Simulator = require('./lib/simulator/runSimulator');
 
 var simulating = process.env.SIMULATING;
+var hub = process.env.HUB || 'liveHub';
 var connectionString = process.env.CONNECTION_STRING;
 var consumerGroup = process.env.CONSUMER_GROUP || '$Default';
 var editMode = process.env.EDIT_MODE || 'unlocked';
@@ -35,7 +37,7 @@ if (simulating === 'true') {
     console.error(new Error("oops, you're missing a CONNECTION_STRING entry in ./.env!"));
     process.exit();
   }
-  var {registry, client, Receiver} = liveHub(connectionString);
+  var {registry, client, Receiver} = require(`./lib/${hub}`)(connectionString);
   var receiver = new Receiver(receiverOptions);
 }
 
